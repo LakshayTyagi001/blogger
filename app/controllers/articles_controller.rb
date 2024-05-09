@@ -1,4 +1,6 @@
 class ArticlesController < ApplicationController
+    # before_action :require_login, except: [:new, :create, :edit, :update, :destroy]
+    before_action :zero_authors_or_authenticated, only: [:new, :create]
     include ArticlesHelper
     def index
         @articles = Article.all
@@ -8,6 +10,15 @@ class ArticlesController < ApplicationController
         @comment = Comment.new
         @comment.article_id = @article.id
     end
+    
+
+    def zero_authors_or_authenticated
+        unless Author.count == 0 || current_user
+            redirect_to root_path
+            return false
+        end
+    end
+
     def new
         @article = Article.new
     end
